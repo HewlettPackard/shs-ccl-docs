@@ -1,6 +1,3 @@
-// SPDX-FileCopyrightText: Copyright Hewlett Packard Enterprise Development LP
-// SPDX-License-Identifier: MIT
-
 # HPE Slingshot Application Note: Running NCCL-Based Applications
 
 ## Summary
@@ -152,3 +149,5 @@ When filing a ticket with the HPE Slingshot NIC team, please include the followi
   * Steps to reproduce the issue 
 
 For NCCL-based applications, also enable `NCCL_DEBUG=info` and ensure the logs show a NCCL version of 2.14 or newer and that the network used is "AWS Libfabric".
+
+Copyright Hewlett Packard Enterprise Development LP
