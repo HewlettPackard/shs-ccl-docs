@@ -9,7 +9,7 @@ This repository provides utility scripts to simplify the process of setting up t
 Setting up NCCL or RCCL on Slingshot involves several steps, including downloading source code, configuring dependencies, and compiling libraries. These scripts ameliorate the complexities by:
 
 - Bringing together the lessons learned from a 4 month collaboration between HPE, Nvidia, and CSCS which addressed collective communications performance at scale, performance variability, and workload hangs.
-- Automating the download and build process for [NVIDIA NCCL](https://github.com/NVIDIA/nccl) or [ROCm RCCL](https://github.com/ROCm/rccl), the [AWS OFI NCCL Plugin](https://github.com/aws/aws-ofi-nccl), and [NCCL Tests](https://github.com/NVIDIA/nccl-tests) or [RCCL Tests](https://github.com/ROCm/rccl-tests) (all optional).
+- Automating the download and build process for [NVIDIA NCCL](https://github.com/NVIDIA/nccl) or [ROCm RCCL](https://github.com/ROCm/rocm-systems) (under `projects/rccl`), the [AWS OFI NCCL Plugin](https://github.com/aws/aws-ofi-nccl), and [NCCL Tests](https://github.com/NVIDIA/nccl-tests) or [RCCL Tests](https://github.com/ROCm/rocm-systems) (under `projects/rccl-tests`) (all optional).
 - Parameterizing dependency versions like CUDA, ROCm, and Libfabric to make it easier to compose custom experiments with different library versions.
 - The scripts always generate log files, so if you run out of scroll back buffer or there is a subtle difference in the build output, you have a better chance of catching the issue/behavior.
 
@@ -136,9 +136,9 @@ Upon successful execution, the following components will be available:
 
 | Component                | Path                                                                 |
 |--------------------------|----------------------------------------------------------------------|
-| RCCL build artifacts     | `<base-dir>/rccl/build`                                             |
+| RCCL build artifacts     | `<base-dir>/rocm-systems/projects/rccl/build/release`               |
 | AWS OFI NCCL plugin      | `<base-dir>/aws-ofi-nccl/src/.libs`                                 |
-| RCCL Tests (if built)    | `<base-dir>/rccl-tests/build`                                       |
+| RCCL Tests (if built)    | `<base-dir>/rocm-systems/projects/rccl-tests/build`                 |
 
 Additionally, a timestamped log file will be saved in the log directory for debugging/troubleshooting.
 
@@ -177,9 +177,9 @@ srun --ntasks-per-node=4 --cpus-per-task=72 --network=disable_rdzv_get ./all_red
 Setup Environment with build artifacts
 ```
 # Setting up paths to dependencies
-export RCCL_HOME=$(pwd)/rccl/build
+export RCCL_HOME=$(pwd)/rocm-systems/projects/rccl/build/release
 export AWS_OFI_NCCL_HOME=$(pwd)/aws-ofi-nccl/src/.libs
-export RCCL_TESTS_HOME=$(pwd)/rccl-tests/build
+export RCCL_TESTS_HOME=$(pwd)/rocm-systems/projects/rccl-tests/build
 
 export LD_LIBRARY_PATH=$RCCL_HOME:${LD_LIBRARY_PATH}
 export LD_LIBRARY_PATH=$AWS_OFI_NCCL_HOME:${LD_LIBRARY_PATH}
@@ -212,9 +212,9 @@ srun --ntasks-per-node=4 --cpus-per-task=72 --network=disable_rdzv_get ./all_red
 
 ## Links/Resources
 - [NVIDIA NCCL](https://github.com/NVIDIA/nccl)
-- [ROCm RCCL](https://github.com/ROCm/rccl)
+- [ROCm RCCL](https://github.com/ROCm/rocm-systems) (under `projects/rccl`)
 - [AWS OFI NCCL Plugin](https://github.com/aws/aws-ofi-nccl)
 - [NCCL Tests](https://github.com/NVIDIA/nccl-tests)
-- [RCCL Tests](https://github.com/ROCm/rccl-tests)
+- [RCCL Tests](https://github.com/ROCm/rocm-systems) (under `projects/rccl-tests`)
 
 ---
