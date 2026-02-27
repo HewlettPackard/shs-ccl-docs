@@ -5,7 +5,8 @@
 #
 # RCCL, NCCL, aws-ofi-nccl  and fabric environment variables for all_reduce_perf
 # Note: When running with slurm, the flag --network=disable_rdzv_get is required
-# and must be added to the srun command.
+# and must be added to the srun command.  When running with PBS, the flag
+# --disable_rdzv_get is required.
 
 export HSA_FORCE_FINE_GRAIN_PCIE=1
 export FI_MR_CACHE_MONITOR=userfaultfd
