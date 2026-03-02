@@ -54,7 +54,7 @@ For the best performance and stability, always use the most recent version of th
 
 ### OFI (Libfabric) Backend for RCCL
 
-To enable high-performance RDMA, you must use the OFI Plug-In for Libfabric-to-RCCL. This open-source backend can be downloaded from GitHub at `https://github.com/ROCm/aws-ofi-rccl`. HPE and AMD have collaborated to ensure this plugin works with Slingshot NICs. Currently, users must build the code from the repository, as HPE does not provide pre-packaged RPMs.
+To enable high-performance RDMA, you must use the OFI Plug-In for Libfabric-to-RCCL. This open-source backend can be downloaded from GitHub at `https://github.com/aws/aws-ofi-nccl`. HPE and AMD have collaborated to ensure this plugin works with Slingshot NICs. Currently, users must build the code from the repository, as HPE does not provide pre-packaged RPMs.
 
 ### GPU Driver and User Stack Compatibility
 
