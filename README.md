@@ -164,6 +164,10 @@ export PATH=${PATH}:$NCCL_TESTS_HOME
 
 Setup NCCL - Slingshot variables
 
+> **Note:** `ccl_env.sh` sets `NCCL_NET`, which forces NCCL to use the network
+> transport. Do not source this file (or unset `NCCL_NET` afterward) for
+> single-node Slurm runs, as it will cause unnecessary VNI allocation.
+
 ```source``` [ccl_env.sh](ccl_env.sh)
 
 Run NCCL-Tests
@@ -187,6 +191,10 @@ export PATH=${PATH}:$RCCL_TESTS_HOME
 ```
 
 Setup RCCL - Slingshot variables
+
+> **Note:** `ccl_env.sh` sets `NCCL_NET`, which forces NCCL/RCCL to use the
+> network transport. Do not source this file (or unset `NCCL_NET` afterward)
+> for single-node Slurm runs, as it will cause unnecessary VNI allocation.
 
 ```source``` [ccl_env.sh](ccl_env.sh)
 

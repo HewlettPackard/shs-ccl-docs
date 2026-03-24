@@ -18,5 +18,8 @@ export FI_CXI_DEFAULT_TX_SIZE=2048
 export NCCL_CROSS_NIC=1
 export NCCL_NET_GDR_LEVEL=PHB
 export NCCL_SOCKET_IFNAME=hsn0,hsn1,hsn2,hsn3
+# WARNING: Do not set NCCL_NET on single-node Slurm runs. Setting this variable
+# forces NCCL to use the network transport even when all ranks share the same
+# node, causing unnecessary VNI allocation and degraded performance.
 export NCCL_NET="AWS Libfabric"
 export FI_CXI_RX_MATCH_MODE=hybrid
