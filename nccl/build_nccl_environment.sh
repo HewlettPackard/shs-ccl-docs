@@ -133,7 +133,7 @@ if [ "$SKIP_TESTS" = false ]; then
     cd nccl-tests
     # The nccl-tests/src Makefile needs NCCL_HOME to be set
     echo NCCL_HOME = $NCCL_HOME
-    make MPI=1 MPI_HOME="$MPICH_DIR" -j "$PARALLELISM" || { echo "Failed to build NCCL Tests"; exit 1; }
+    make NCCL_HOME="$NCCL_HOME" MPI=1 MPI_HOME="$MPICH_DIR" -j "$PARALLELISM" || { echo "Failed to build NCCL Tests"; exit 1; }
     cd ..
 fi
 
