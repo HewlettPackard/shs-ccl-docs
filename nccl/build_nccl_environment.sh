@@ -118,7 +118,7 @@ if [ "$SKIP_CLONE" = false ]; then
     fi
 fi
 cd aws-ofi-nccl
-git checkout "v1.18.0" || { echo "Failed to checkout AWS OFI NCCL tag v1.18.0"; exit 1; }
+git checkout "${AWS_OFI_NCCL_VERSION}" || { echo "Failed to checkout AWS OFI NCCL tag ${AWS_OFI_NCCL_VERSION}"; exit 1; }
 ./autogen.sh || { echo "Failed to run autogen.sh for AWS OFI NCCL"; exit 1; }
 CC=gcc ./configure --with-libfabric="$LIBFABRIC_PATH" --with-cuda="$CUDA_HOME" --disable-picky-compiler || { echo "Failed to configure AWS OFI NCCL"; exit 1; }
 make -j "$PARALLELISM" || { echo "Failed to build AWS OFI NCCL"; exit 1; }
