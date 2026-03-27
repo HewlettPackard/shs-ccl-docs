@@ -22,9 +22,9 @@ usage() {
     echo "Usage: $0 [options]"
     echo "Options:"
     echo "  -b, --base-dir <path>         Base directory for builds (default: current directory)"
-    echo "  -l, --libfabric-path <path>   Path to libfabric (default: /opt/cray/libfabric/1.22)"
-    echo "  -p, --parallelism <threads>   Number of threads for parallel builds (default: 16)"
-    echo "  -r, --rccl-version <version>  RCCL ROCm version to use (default: rocm-6.4.0)"
+    echo "  -l, --libfabric-path <path>   Path to libfabric (default: $LIBFABRIC_PATH)"
+    echo "  -p, --parallelism <threads>   Number of threads for parallel builds (default: $PARALLELISM)"
+    echo "  -r, --rccl-version <version>  RCCL ROCm version to use (default: $ROCM_VERSION)"
     echo "  --log-dir <path>              Directory to save the build log file (default: <base-dir>/logs)"
     echo "  --skip-clone                  Skip cloning repositories (use existing directories)"
     echo "  --skip-tests                  Skip building rccl-tests"
@@ -132,6 +132,7 @@ if [ "$SKIP_CLONE" = false ]; then
 fi
 if [ -d "$BASE_DIR/rccl" ]; then
     pushd "$BASE_DIR/rccl"
+    git checkout "$ROCM_VERSION" || { echo "Failed to checkout RCCL version $ROCM_VERSION"; exit 1; }
     # If RCCL provides an install script, use hipcc as CXX similar to original script
     if [ -x ./install.sh ]; then
         CXX=hipcc srun ./install.sh --disable-msccl-kernel --fast || true
