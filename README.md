@@ -136,8 +136,8 @@ Upon successful execution, the following components will be available:
 
 | Component                | Path                                                                 |
 |--------------------------|----------------------------------------------------------------------|
-| RCCL build artifacts     | `<base-dir>/rccl/build`                                             |
-| AWS OFI NCCL plugin      | `<base-dir>/aws-ofi-nccl/src/.libs`                                 |
+| RCCL build artifacts     | `<base-dir>/rccl/build/release`                                     |
+| AWS OFI RCCL plugin      | `<base-dir>/aws-ofi-rccl/lib`                                       |
 | RCCL Tests (if built)    | `<base-dir>/rccl-tests/build`                                       |
 
 Additionally, a timestamped log file will be saved in the log directory for debugging/troubleshooting.
@@ -181,14 +181,21 @@ srun --ntasks-per-node=4 --cpus-per-task=72 --network=disable_rdzv_get ./all_red
 Setup Environment with build artifacts
 ```
 # Setting up paths to dependencies
-export RCCL_HOME=$(pwd)/rccl/build
-export AWS_OFI_NCCL_HOME=$(pwd)/aws-ofi-nccl/src/.libs
+export RCCL_HOME=$(pwd)/rccl/build/release
+export AWS_OFI_RCCL_HOME=$(pwd)/aws-ofi-rccl/lib
 export RCCL_TESTS_HOME=$(pwd)/rccl-tests/build
 
 export LD_LIBRARY_PATH=$RCCL_HOME:${LD_LIBRARY_PATH}
-export LD_LIBRARY_PATH=$AWS_OFI_NCCL_HOME:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=$AWS_OFI_RCCL_HOME:${LD_LIBRARY_PATH}
 export PATH=${PATH}:$RCCL_TESTS_HOME
 ```
+
+> **Note:** RCCL contains a known bug where it may search for `libnccl-net.so`
+> instead of `librccl-net.so` when loading the network plugin. To work around
+> this, explicitly point RCCL at the correct plugin:
+> ```
+> export NCCL_NET_PLUGIN=$AWS_OFI_RCCL_HOME/librccl-net.so
+> ```
 
 Setup RCCL - Slingshot variables
 
