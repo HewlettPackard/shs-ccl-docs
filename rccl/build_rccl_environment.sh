@@ -65,7 +65,7 @@ echo "============================="
 # Install locations (best-effort paths)
 RCCL_HOME="$BASE_DIR/rccl/build"
 HWLOC_HOME="$BASE_DIR/hwloc"
-AWS_OFI_NCCL_HOME="$BASE_DIR/aws-ofi-nccl/src/.libs"
+AWS_OFI_RCCL_HOME="$BASE_DIR/aws-ofi-rccl"
 RCCL_TESTS_HOME="$BASE_DIR/rccl-tests/build"
 
 cat <<EOF
@@ -118,8 +118,10 @@ fi
 if [ -d "$BASE_DIR/aws-ofi-nccl" ]; then
     pushd "$BASE_DIR/aws-ofi-nccl" && git checkout "v1.18.0" || { echo "Failed to checkout aws-ofi-nccl tag v1.18.0"; popd; exit 1; }
     ./autogen.sh || true
-    CC=gcc ./configure --with-libfabric="$LIBFABRIC_PATH" --with-hwloc="$BASE_DIR" --with-rocm="$ROCM_PATH" || true
+    CC=gcc ./configure --with-libfabric="$LIBFABRIC_PATH" --with-hwloc="$BASE_DIR" --with-rocm="$ROCM_PATH" \
+        --prefix="$AWS_OFI_RCCL_HOME" || true
     make -j"$PARALLELISM" || true
+    make install || true
     popd
 fi
 
@@ -165,7 +167,7 @@ echo "Build completed successfully!"
 echo "============================="
 echo "RCCL_HOME: $RCCL_HOME"
 echo "HWLOC_HOME: $HWLOC_HOME"
-echo "AWS_OFI_NCCL_HOME: $AWS_OFI_NCCL_HOME"
+echo "AWS_OFI_RCCL_HOME: $AWS_OFI_RCCL_HOME"
 echo "RCCL_TESTS_HOME: $RCCL_TESTS_HOME"
 
 echo "To verify installation, inspect the log and built artifacts under $BASE_DIR"
