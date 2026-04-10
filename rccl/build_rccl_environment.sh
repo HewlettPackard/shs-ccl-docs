@@ -116,7 +116,7 @@ if [ "$SKIP_CLONE" = false ]; then
     fi
 fi
 if [ -d "$BASE_DIR/aws-ofi-nccl" ]; then
-    pushd "$BASE_DIR/aws-ofi-nccl" && git checkout "v1.18.0" || { echo "Failed to checkout aws-ofi-nccl tag v1.18.0"; popd; exit 1; }
+    pushd "$BASE_DIR/aws-ofi-nccl" && git checkout "v1.19.0" || { echo "Failed to checkout aws-ofi-nccl tag v1.19.0"; popd; exit 1; }
     ./autogen.sh || true
     CC=gcc ./configure --with-libfabric="$LIBFABRIC_PATH" --with-hwloc="$BASE_DIR" --with-rocm="$ROCM_PATH" || true
     make -j"$PARALLELISM" || true

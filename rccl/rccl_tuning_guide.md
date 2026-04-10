@@ -107,7 +107,7 @@ export AWS_OFI_PLUGIN_HOME=/path/to/install/aws-ofi-plugin
 echo "BUILDING OFI PLUGIN"
 git clone https://github.com/aws/aws-ofi-nccl.git ${BASE_DIR}/aws-ofi-nccl
 cd ${BASE_DIR}/aws-ofi-nccl
-git checkout v1.18.0
+git checkout v1.19.0
 ./autogen.sh
 CC=gcc ./configure \
     --with-libfabric=${LIBFABRIC_PATH} \

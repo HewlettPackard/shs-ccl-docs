@@ -73,7 +73,7 @@ The scripts can be run with no command line arguments, or one can override the d
 | `-p, --parallelism <threads>` | Number of threads for parallel builds                                                        | 16                              |
 | `-n, --nccl-version <version>`| NCCL version to build                                                                        | `v2.27.7-1`                     |
 | `-r, --rccl-version <version>`| RCCL version to build                                                                        | `rocm-6.4.0`                    |
-| `-a, --aws-version <version>` | AWS OFI NCCL plugin version to build                                                         | `v1.18.0`                       |
+| `-a, --aws-version <version>` | AWS OFI NCCL plugin version to build                                                         | `v1.19.0`                       |
 | `--log-dir <path>`            | Directory to save the build log file                                                         | `<base-dir>/logs`               |
 | `--skip-clone`                | Skip cloning repositories (use existing directories)                                         | Disabled                        |
 | `--skip-tests`                | Skip cloning and building tests (NCCL or RCCL)                                         | Disabled                        |
