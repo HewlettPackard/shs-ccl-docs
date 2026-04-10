@@ -197,6 +197,25 @@ export PATH=${PATH}:$RCCL_TESTS_HOME
 > export NCCL_NET_PLUGIN=$AWS_OFI_RCCL_HOME/librccl-net.so
 > ```
 
+> **Note:** RCCL supports an external tuner plugin that can override the
+> built-in collective algorithm and protocol selection. To load a custom tuner,
+> set `NCCL_TUNER_PLUGIN` to the path of the tuner shared library:
+> ```
+> export NCCL_TUNER_PLUGIN=/path/to/librccl-tuner.so
+> ```
+> Without this variable, RCCL searches for `librccl-tuner.so` in
+> `LD_LIBRARY_PATH` and falls back to its internal tuner if none is found.
+> The message `TUNER/Plugin: Failed to find ncclTunerPlugin_v3 symbol, using
+> internal tuner instead` is normal when no external tuner is configured.
+
+> **Note:** To enable proxy-level profiling (e.g., for debugging network
+> operation timing), set `NCCL_PROXY_PROFILE` to a file path. RCCL will
+> write a Chrome trace-format JSON file that can be loaded in
+> `chrome://tracing`:
+> ```
+> export NCCL_PROXY_PROFILE=/tmp/rccl_proxy_trace.json
+> ```
+
 Setup RCCL - Slingshot variables
 
 > **Note:** `ccl_env.sh` sets `NCCL_NET`, which forces NCCL/RCCL to use the
