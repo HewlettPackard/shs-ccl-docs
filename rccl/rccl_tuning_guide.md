@@ -113,10 +113,10 @@ git checkout v1.19.0
 CC=gcc ./configure \
     --with-libfabric=${LIBFABRIC_PATH} \
     --with-rocm=${ROCM_PATH} \
-    --with-mpi=${MPI_HOME}
-make
+    --with-mpi=${MPI_HOME} \
+    --prefix=${AWS_OFI_PLUGIN_HOME}
+make && make install
 cd ..
-rm -rf aws-ofi-nccl
 
 # Build RCCL Tests
 echo "BUILDING RCCL TESTS"
@@ -134,7 +134,7 @@ At runtime, ensure the compiled plugin (`librccl-net.so`) is in your `LD_LIBRARY
 
 ### Low Performance
 
-1.  **Check if the plugin library is in `LD_LIBRARY_PATH`**. If you see the message `No plugin found (librccl-net.so)`, it means RCCL could not locate the plugin.
+1.  **Check if the plugin library is in `LD_LIBRARY_PATH`**. If you see the message `No plugin found (librccl-net.so)`, it means RCCL could not locate the plugin. Note that some RCCL versions search for `libnccl-net.so` instead of `librccl-net.so`; if the plugin is not found, set `NCCL_NET_PLUGIN` to the explicit path of the `.so` file.
 2.  **Verify the plugin is loaded**. Set `export NCCL_DEBUG=INFO` and look for the log message `Loaded net plugin AWS Libfabric` for all ranks.
 3.  **Confirm GDR is enabled**. Check that `echo $NCCL_NET_GDR_LEVEL` returns `PHB`.
 
