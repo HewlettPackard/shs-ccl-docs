@@ -44,6 +44,43 @@ Before using the scripts, ensure the following are installed and available in yo
 
 ---
 
+## Quick Start
+
+> **TL;DR** — clone this repo, load the right modules, run the build script,
+> source `ccl_env.sh`, then launch your test.
+
+**NCCL (NVIDIA GPUs):**
+```bash
+git clone https://github.com/HewlettPackard/shs-ccl-docs.git
+cd shs-ccl-docs
+module load cudatoolkit PrgEnv-cray && module swap cray-mpich cray-mpich-abi
+./nccl/build_nccl_environment.sh          # builds to ./nccl/build, ./aws-ofi-nccl/src/.libs, ./nccl-tests/build
+source ccl_env.sh
+export NCCL_HOME=$(pwd)/nccl/build
+export LD_LIBRARY_PATH=$(pwd)/aws-ofi-nccl/src/.libs:$NCCL_HOME:$LD_LIBRARY_PATH
+cd nccl-tests/build
+srun --ntasks-per-node=4 --cpus-per-task=72 --network=disable_rdzv_get ./all_reduce_perf -b 8 -e 4G -f 2
+```
+
+**RCCL (AMD GPUs):**
+```bash
+git clone https://github.com/HewlettPackard/shs-ccl-docs.git
+cd shs-ccl-docs
+module load rocm PrgEnv-cray && module swap cray-mpich cray-mpich-abi
+./rccl/build_rccl_environment.sh          # builds to ./rccl/build/release, ./aws-ofi-rccl/lib, ./rccl-tests/build
+source ccl_env.sh
+export RCCL_HOME=$(pwd)/rccl/build/release
+export LD_LIBRARY_PATH=$(pwd)/aws-ofi-rccl/lib:$RCCL_HOME:$LD_LIBRARY_PATH
+cd rccl-tests/build
+srun --ntasks-per-node=4 --cpus-per-task=72 --network=disable_rdzv_get ./all_reduce_perf -b 8 -e 4G -f 2
+```
+
+> **Note:** `ccl_env.sh` sets `NCCL_NET`, which forces the network transport.
+> Do **not** source it for single-node Slurm runs — it will cause unnecessary
+> VNI allocation. See [Validation](#validation) for details.
+
+---
+
 ## Usage
 
 ### Pre-Flight Steps - Loading necessary modules (NCCL)
