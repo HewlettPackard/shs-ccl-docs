@@ -100,7 +100,7 @@ Most ROCm installations include RCCL, so you should use the pre-installed versio
 ```bash
 # Set environment variables for dependencies
 export ROCM_HOME=/path/to/rocm
-export OFI_HOME=/opt/cray/libfabric/1.15.2.0
+export OFI_HOME=/opt/cray/libfabric/1.22.0
 export MPI_HOME=/opt/cray/pe/mpich/8.1.28/ofi/crayclang/17.0
 export AWS_OFI_PLUGIN_HOME=/path/to/install/aws-ofi-plugin
 
