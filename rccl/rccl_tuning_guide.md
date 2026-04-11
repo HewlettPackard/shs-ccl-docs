@@ -70,7 +70,7 @@ Properly configuring Libfabric environment settings is **mandatory** for running
 | `FI_MR_CACHE_MONITOR` | `userfaultfd` | Sets the memory cache monitor to detect changes between virtual and physical memory pages. `kdreg2` is another valid option. |
 | `FI_CXI_DISABLE_HOST_REGISTER` | `1` | Avoids ROCm allocation calls from the provider that may cause RCCL deadlocks. |
 | `FI_CXI_DEFAULT_CQ_SIZE` | `131072` | Should be increased, especially for large jobs. |
-| `FI_CXI_RDZV_PROTO` | `alt_read` | Use the alt_read rendevous protocool. |
+| `FI_CXI_RDZV_PROTO` | `alt_read` | Use the alt_read rendezvous protocol. |
 | `FI_CXI_RX_MATCH_MODE` | `hybrid` | It allows the network stack to transition to software matching if hardware resources are exhausted. |
 | `FI_CXI_RDZV_EAGER_SIZE` | `0` | Prevents sending data before the receiver is ready. |
 | `FI_CXI_DEFAULT_TX_SIZE` | `2048` | Should be set especially for large jobs that are dependent on unexpected rendezvous messaging. |
