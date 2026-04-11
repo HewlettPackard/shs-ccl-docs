@@ -57,9 +57,10 @@ module load cudatoolkit PrgEnv-cray && module swap cray-mpich cray-mpich-abi
 ./nccl/build_nccl_environment.sh          # builds to ./nccl/build, ./aws-ofi-nccl/src/.libs, ./nccl-tests/build
 source ccl_env.sh
 export NCCL_HOME=$(pwd)/nccl/build
-export LD_LIBRARY_PATH=$(pwd)/aws-ofi-nccl/src/.libs:$NCCL_HOME:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$(pwd)/aws-ofi-nccl/src/.libs:$NCCL_HOME/lib:$LD_LIBRARY_PATH
 cd nccl-tests/build
 # Adjust --ntasks-per-node to match GPUs per node and --cpus-per-task accordingly
+# For multi-node, add --nodes=N --nodelist=<node1,node2,...> to the srun command.
 srun --ntasks-per-node=4 --cpus-per-task=72 --network=disable_rdzv_get ./all_reduce_perf -b 8 -e 4G -f 2
 ```
 
@@ -78,6 +79,8 @@ srun --ntasks-per-node=4 --cpus-per-task=72 --network=disable_rdzv_get ./all_red
 ```
 
 > **Note:** `ccl_env.sh` sets `NCCL_NET`, which forces the network transport.
+> For **multi-node** runs, sourcing it is **required** — without `NCCL_NET`, NCCL
+> will not use the Slingshot fabric between nodes.
 > Do **not** source it for single-node Slurm runs — it will cause unnecessary
 > VNI allocation. See [Validation](#validation) for details.
 
@@ -209,7 +212,7 @@ export NCCL_HOME=$(pwd)/nccl/build
 export AWS_OFI_NCCL_HOME=$(pwd)/aws-ofi-nccl/src/.libs
 export NCCL_TESTS_HOME=$(pwd)/nccl-tests/build
 
-export LD_LIBRARY_PATH=$NCCL_HOME:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=$NCCL_HOME/lib:${LD_LIBRARY_PATH}
 export LD_LIBRARY_PATH=$AWS_OFI_NCCL_HOME:${LD_LIBRARY_PATH}
 export PATH=${PATH}:$NCCL_TESTS_HOME
 ```
@@ -217,8 +220,10 @@ export PATH=${PATH}:$NCCL_TESTS_HOME
 Setup NCCL - Slingshot variables
 
 > **Note:** `ccl_env.sh` sets `NCCL_NET`, which forces NCCL to use the network
-> transport. Do not source this file (or unset `NCCL_NET` afterward) for
-> single-node Slurm runs, as it will cause unnecessary VNI allocation.
+> transport. For **multi-node** runs, sourcing it is **required** — without
+> `NCCL_NET`, NCCL will not use the Slingshot fabric between nodes.
+> Do not source this file (or unset `NCCL_NET` afterward) for single-node
+> Slurm runs, as it will cause unnecessary VNI allocation.
 
 ```source``` [ccl_env.sh](ccl_env.sh)
 
