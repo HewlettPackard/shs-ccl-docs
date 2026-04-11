@@ -60,9 +60,11 @@ module load PrgEnv-cray
 module swap cray-mpich cray-mpich-abi
 ```
 
-The scripts can be run with no command line arguments, or one can override the default options:
-`./build_nccl_environment.sh [options]` for NCCL builds
-`./build_rccl_environment.sh [options]` for RCCL builds
+The scripts live in the `nccl/` and `rccl/` subdirectories and can be
+run with no command-line arguments, or with options to override defaults.
+Run them from the directory you want to use as the build base:
+`./nccl/build_nccl_environment.sh [options]` for NCCL builds
+`./rccl/build_rccl_environment.sh [options]` for RCCL builds
 
 ### Options
 
@@ -87,35 +89,35 @@ The scripts can be run with no command line arguments, or one can override the d
 
 1. **Default Build**:
 ```
-./build_nccl_environment.sh
+./nccl/build_nccl_environment.sh
 ```
 
 2. **Custom Build Directory and Parallelism**:
 You can pass a custom build directory and also change the build parallelism (note that there are diminishing marginal returns on increasing the number of build threads)
 ```
-./build_nccl_environment.sh --base-dir /path/to/build/directory --parallelism 32
+./nccl/build_nccl_environment.sh --base-dir /path/to/build/directory --parallelism 32
 ```
 3. **Use Pre-existing Repositories**:
 This option can be leveraged if you are providing your own repositories or don't need to clone the repositories because you already have done so previously.
 ```
-./build_nccl_environment.sh --skip-clone
+./nccl/build_nccl_environment.sh --skip-clone
 ```
 4. **Skip Tests**:
 In case you don't want to clone and build the NCCL or RCCL tests.
 ```
-./build_nccl_environment.sh --skip-tests
+./nccl/build_nccl_environment.sh --skip-tests
 ```
 
 ### RCCL Examples:
 
 1. **Default Build**:
 ```
-./build_rccl_environment.sh
+./rccl/build_rccl_environment.sh
 ```
 
 2. **Custom ROCm Version**:
 ```
-./build_rccl_environment.sh --rccl-version rocm-6.4.0
+./rccl/build_rccl_environment.sh --rccl-version rocm-6.4.0
 ```
 
 ---
