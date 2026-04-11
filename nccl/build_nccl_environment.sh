@@ -1,8 +1,8 @@
+#!/bin/bash
 # SPDX-FileCopyrightText: Copyright Hewlett Packard Enterprise Development LP
 # SPDX-License-Identifier: MIT
 
-#!/bin/bash
-# Hewlett Packard Enterpise 2025
+# Hewlett Packard Enterprise 2025
 # Isa Wazirzada, Ryan Hankins
 set -e
 set -o pipefail
