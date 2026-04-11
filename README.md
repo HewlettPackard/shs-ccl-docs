@@ -59,6 +59,7 @@ source ccl_env.sh
 export NCCL_HOME=$(pwd)/nccl/build
 export LD_LIBRARY_PATH=$(pwd)/aws-ofi-nccl/src/.libs:$NCCL_HOME:$LD_LIBRARY_PATH
 cd nccl-tests/build
+# Adjust --ntasks-per-node to match GPUs per node and --cpus-per-task accordingly
 srun --ntasks-per-node=4 --cpus-per-task=72 --network=disable_rdzv_get ./all_reduce_perf -b 8 -e 4G -f 2
 ```
 
@@ -72,6 +73,7 @@ source ccl_env.sh
 export RCCL_HOME=$(pwd)/rccl/build/release
 export LD_LIBRARY_PATH=$(pwd)/aws-ofi-rccl/lib:$RCCL_HOME:$LD_LIBRARY_PATH
 cd rccl-tests/build
+# Adjust --ntasks-per-node to match GPUs per node and --cpus-per-task accordingly
 srun --ntasks-per-node=4 --cpus-per-task=72 --network=disable_rdzv_get ./all_reduce_perf -b 8 -e 4G -f 2
 ```
 
@@ -117,6 +119,17 @@ Run them from the directory you want to use as the build base:
 | `--skip-clone`                | Skip cloning repositories (use existing directories)                                         | Disabled                        |
 | `--skip-tests`                | Skip cloning and building tests (NCCL or RCCL)                                         | Disabled                        |
 | `-h, --help`                  | Give a little help                                                                           | N/A                             |
+
+> **Note on `--libfabric-path`:** The default path (`/opt/cray/libfabric/1.22.0`) uses
+> upstream Libfabric versioning. On systems running Cray Slingshot Host Software (SHS),
+> the directory name under `/opt/cray/libfabric/` reflects the **SHS release** rather than
+> the upstream Libfabric version. Run `ls /opt/cray/libfabric/` on your compute node to
+> discover the installed version, then pass it with `-l`. For example, SHS 2.3.1 ships
+> Libfabric 1.29.1 and installs it at `/opt/cray/libfabric/2.3.1`.
+>
+> The build scripts must be executed on a **compute node** (e.g. via `srun --pty bash`
+> or an `sbatch` job), because the required modules (`CUDA_HOME`, `ROCM_PATH`,
+> `MPICH_DIR`) are only available in the compute-node environment.
 
 ---
 
@@ -212,6 +225,8 @@ Setup NCCL - Slingshot variables
 Run NCCL-Tests
 ```
 cd <base-dir>/nccl-tests/build
+# --ntasks-per-node should equal the number of GPUs per node.
+# --cpus-per-task should be total_cpus_per_node / ntasks_per_node.
 srun --ntasks-per-node=4 --cpus-per-task=72 --network=disable_rdzv_get ./all_reduce_perf -b 8 -e 4G -f 2
 ```
 
@@ -266,6 +281,10 @@ Setup RCCL - Slingshot variables
 Run RCCL-Tests
 ```
 cd <base-dir>/rccl-tests/build
+# --ntasks-per-node should equal the number of GPUs per node.
+# --cpus-per-task should be total_cpus_per_node / ntasks_per_node.
+# Ensure the ROCm module matching your build is loaded so that libamdhip64.so
+# and librccl.so are on LD_LIBRARY_PATH (e.g. module load rocm/6.3.3).
 srun --ntasks-per-node=4 --cpus-per-task=72 --network=disable_rdzv_get ./all_reduce_perf -b 8 -e 4G -f 2
 ```
 
@@ -280,6 +299,12 @@ srun --ntasks-per-node=4 --cpus-per-task=72 --network=disable_rdzv_get ./all_red
 
 3. **Build Errors**:
    Review the log file in the log directory for detailed error messages.
+
+4. **`error while loading shared libraries: libamdhip64.so.X: cannot open shared object file`**:
+   The rccl-tests binary was built against a different ROCm major version than the one
+   currently active. Load the ROCm module that matches your build before running the test,
+   e.g. `module load rocm/6.3.3`. If the system default ROCm has been upgraded since you
+   last built, rebuild with the new version using `--rccl-version rocm-<new_version>`.
 
 ---
 
