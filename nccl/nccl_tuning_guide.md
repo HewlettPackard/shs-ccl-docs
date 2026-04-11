@@ -99,7 +99,7 @@ Most CUDA installations include NCCL, so you should use the pre-installed versio
 ```bash
 # Set environment variables for dependencies
 export CUDA_HOME=/usr/local/cuda
-export OFI_HOME=/opt/cray/libfabric/1.15.2.0
+export OFI_HOME=/opt/cray/libfabric/1.22.0
 export AWS_OFI_PLUGIN_HOME=/path/to/install/aws-ofi-plugin
 export HWLOC_PREFIX=`pwd`/hwloc/install
 
