@@ -77,7 +77,7 @@ Properly configuring Libfabric environment settings is **mandatory** for running
 | `FI_CXI_RDZV_GET_MIN` | `0` | Disables the rendezvous get optimization; use with `FI_CXI_RDZV_PROTO=alt_read`. |
 | `FI_CXI_DEFAULT_TX_SIZE` | `2048` | Should be set especially for large jobs that are dependent on unexpected rendezvous messaging. |
 
-**Note**: To use the `hybrid` rendezvous protocol, the driver property `rdzv_get_en` must be set to `0`. This can be done system-wide by a privileged user or, ideally, on a per-job basis through a job scheduler like Slurm (`--network=disable_rdzv_get`) or PBS Pro (`--disable_rdzv_get`).
+**Note**: To use the `alt_read` rendezvous protocol, the driver property `rdzv_get_en` must be set to `0`. This can be done system-wide by a privileged user or, ideally, on a per-job basis through a job scheduler like Slurm (`--network=disable_rdzv_get`) or PBS Pro (`--disable_rdzv_get`).
 
 -----
 
