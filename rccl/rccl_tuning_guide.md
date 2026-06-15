@@ -90,7 +90,7 @@ Several environment variables, though prefixed with `NCCL_`, are required for AM
 | `NCCL_CROSS_NIC` | `1` | Has been found to improve performance on large systems. |
 | `NCCL_NET_GDR_LEVEL` | `PHB` | Required to enable RDMA between GPUs. |
 | `NCCL_SOCKET_IFNAME` | `hsn0,hsn1,hsn2,hsn3` | Limits RCCL's bootstrap and socket communication to a specific interface.  These should match the interfaces available.  |
-| `NCCL_NET` | `"AWS Libfabric"` | Ensures that RCCL will terminate if it fails to load the Libfabric plugin, preventing an undesirable fallback to sockets. |
+| `NCCL_NET` | `"OFI"` | Ensures that RCCL will terminate if it fails to load the Libfabric plugin, preventing an undesirable fallback to sockets. |
 
 -----
 

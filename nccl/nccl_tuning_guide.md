@@ -89,7 +89,7 @@ Several environment variables are required for NVIDIA NCCL to function correctly
 | `NCCL_CROSS_NIC` | `1` | Has been found to improve performance on large systems. |
 | `NCCL_NET_GDR_LEVEL` | `PHB` | Required to enable RDMA between GPUs. |
 | `NCCL_SOCKET_IFNAME` | `hsn0,hsn1,hsn2,hsn3` | Limits NCCL's bootstrap and socket communication to a specific interface.  These should match the interfaces available.  |
-| `NCCL_NET` | `"AWS Libfabric"` | Ensures that NCCL will terminate if it fails to load the Libfabric plugin, preventing an undesirable fallback to sockets. |
+| `NCCL_NET` | `"OFI"` | Ensures that NCCL will terminate if it fails to load the Libfabric plugin, preventing an undesirable fallback to sockets. |
 
 -----
 
