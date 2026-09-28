@@ -139,15 +139,58 @@ At runtime, ensure the compiled plugin (`librccl-net.so`) is in your `LD_LIBRARY
 2.  **Verify the plugin is loaded**. Set `export NCCL_DEBUG=INFO` and look for the log message `Loaded net plugin AWS Libfabric` for all ranks.
 3.  **Confirm GDR is enabled**. Check that `echo $NCCL_NET_GDR_LEVEL` returns `PHB`.
 
+### Double Free / Crash on Exit (SIGABRT, SIGFPE)
+
+Applications that link both the OFI plugin's `hwloc` dependency and RCCL's ROCm SMI usage can crash during process teardown with errors such as:
+
+```bash
+double free or corruption (out)
+```
+
+or a `SIGABRT`/`SIGFPE` shortly after the collective results are printed but before the process exits cleanly.
+This is not a resource-tracking bug in your application; it is caused by loading two incompatible AMD device-monitoring libraries into the same process.
+
+**Root cause**:
+
+ROCm ships two mutually exclusive implementations of the ROCm SMI (RSMI) interface — the legacy `librocm_smi64.so` and the newer `libamd_smi.so`. `hwloc`'s RSMI component (used by the OFI plugin for PCI/GPU
+topology discovery) links against whichever implementation it was configured with, while RCCL independently initializes its own SMI usage (`rsmi_init()`/`amd_smi_init()`, gated by `NCCL_USE_ROCM_SMI_LIB` / `NCCL_USE_AMD_SMI_LIB`).
+If `hwloc` was built against a *different* implementation than the one RCCL uses, both libraries end up loaded in the same process. Their C++ global static objects (for example `std::map<amd::smi::DevInfoTypes, ...>`) then alias one another and are destructed twice when the process exits, producing the double free.
+
+**Debugging Steps**:
+
+1.  **Confirm the crash happens at exit, after all collectives complete.** If the test output (bandwidth numbers, "Collective test concluded") is printed successfully and the crash follows immediately afterward,
+    this is almost certainly the RSMI mismatch described here rather than a communication or memory-registration issue.
+2.  **Identify which RSMI backend `hwloc` was built against.** Check the library dependencies of the `libhwloc.so` used by the OFI plugin:
+    ```sh
+    readelf -d /path/to/libhwloc.so.0 | grep NEEDED | grep -E 'rocm_smi|amd_smi'
+    ```
+    Don't rely on `ldd` output alone if you rebuilt `hwloc` — verify `config.log`/`config.h` show `HWLOC_RSMI_USE_ROCM_SMI` (or `HWLOC_RSMI_USE_AMD_SMI`) matching what you expect,
+    since stale build directories can retain results from an earlier configuration.
+3.  **Identify which RSMI backend RCCL is using.** Up to and including ROCm 7.2.4, the RCCL that is shipped with the ROCm installation is linked against `librocm_smi`; RCCL builds included with newer ROCm versions are linked against `libamd_smi`.
+4.  **Ensure only one RSMI backend is loaded process-wide.**
+    Rebuild `hwloc` so that its RSMI component uses the same implementation as your RCCL build.
+    `hwloc`'s `configure` probes for both implementations and prefers AMD SMI when both are available, so the backend must be pinned explicitly:
+
+    ```sh
+    # Match RCCL linked against librocm_smi64 (ROCm <= 7.2.4)
+    ./configure --with-rocm=${ROCM_PATH} --disable-rsmi-amd
+
+    # Match RCCL linked against libamd_smi (ROCm >= 7.14)
+    ./configure --with-rocm=${ROCM_PATH} --disable-rsmi-rocm
+    ```
+
+    Confirm the `configure` output reports the expected backend (for example `Using only ROCm SMI for RSMI backend`), then rebuild and reinstall `hwloc` and rebuild the OFI plugin against it.
+    Re-run the check from step 2 to verify that only one of `librocm_smi64` / `libamd_smi` appears as a `NEEDED` entry.
+
 ### Filing a Support Ticket
 
 When filing a ticket with the HPE Slingshot NIC team, please include the following:
 
-  * HPE Slingshot Host Software version 
-  * RCCL, MPI, and OFI plugin versions 
-  * Application details and documentation 
-  * `stdout` and `stderr` logs with `FI_LOG_LEVEL=info` and `FI_LOG_PROV=cxi` enabled 
-  * Steps to reproduce the issue 
+  * HPE Slingshot Host Software version
+  * RCCL, MPI, and OFI plugin versions
+  * Application details and documentation
+  * `stdout` and `stderr` logs with `FI_LOG_LEVEL=info` and `FI_LOG_PROV=cxi` enabled
+  * Steps to reproduce the issue
 
 For RCCL-based applications, also enable `NCCL_DEBUG=info` and ensure the logs show a RCCL version of 2.14 or newer and that the network used is "AWS Libfabric".
 

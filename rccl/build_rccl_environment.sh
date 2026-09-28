@@ -116,6 +116,12 @@ if [ "$SKIP_CLONE" = false ]; then
         git clone https://github.com/open-mpi/hwloc.git "$BASE_DIR/hwloc" || { echo "Failed to clone hwloc"; exit 1; }
     fi
 fi
+
+# version_le <version> <reference>  -> true if version <= reference
+version_le() {
+    [ "$1" = "$2" ] || printf '%s\n%s\n' "$1" "$2" | sort -VC
+}
+
 if [ -d "$BASE_DIR/hwloc" ]; then
     pushd "$BASE_DIR/hwloc"
     # Add HWLOC_VERSION to HWLOC_HOME
@@ -124,9 +130,19 @@ if [ -d "$BASE_DIR/hwloc" ]; then
     if [ -x ./autogen.sh ]; then
       ./autogen.sh || true
     fi
-    ./configure --with-rocm=${ROCM_PATH} --disable-doxygen --disable-cairo --prefix="$HWLOC_HOME" || true
-    make -j"$PARALLELISM" || true
-    make install || true
+
+    # ROCm <= 7.2.4 uses --disable-rsmi-amd, newer releases use --disable-rsmi-rocm
+    ROCM_VERSION_NUMBER="${ROCM_VERSION#rocm-}"
+    if version_le "$ROCM_VERSION_NUMBER" "7.2.4"; then
+        RSMI_FLAG="--disable-rsmi-amd"
+    else
+        RSMI_FLAG="--disable-rsmi-rocm"
+    fi
+
+    ./configure --with-rocm="${ROCM_PATH}" --disable-doxygen --disable-cairo \
+                "$RSMI_FLAG" --prefix="$HWLOC_HOME"
+    make -j"$PARALLELISM"
+    make install
     popd
 fi
 
