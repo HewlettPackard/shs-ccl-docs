@@ -152,8 +152,9 @@ This is not a resource-tracking bug in your application; it is caused by loading
 
 **Root cause**:
 
-ROCm ships two mutually exclusive implementations of the ROCm SMI (RSMI) interface — the legacy `librocm_smi64.so` and the newer `libamd_smi.so`. `hwloc`'s RSMI component (used by the OFI plugin for PCI/GPU
-topology discovery) links against whichever implementation it was configured with, while RCCL independently initializes its own SMI usage (`rsmi_init()`/`amd_smi_init()`, gated by `NCCL_USE_ROCM_SMI_LIB` / `NCCL_USE_AMD_SMI_LIB`).
+ROCm ships two mutually exclusive implementations of the ROCm SMI (RSMI) interface — the legacy `librocm_smi64.so` and the newer `libamd_smi.so`.
+The RSMI component of `hwloc` (which is used by the OFI plugin to detect the PCI/GPU topology) is linked to the specific implementation for which it was configured, while RCCL independently initializes the use of SMI (`rsmi_init()`/`amd_smi_init()`).
+Up to and including ROCm 7.2.4, the RCCL that is shipped with the ROCm installation is linked against librocm_smi; RCCL builds included with newer ROCm versions are linked against libamd_smi.
 If `hwloc` was built against a *different* implementation than the one RCCL uses, both libraries end up loaded in the same process. Their C++ global static objects (for example `std::map<amd::smi::DevInfoTypes, ...>`) then alias one another and are destructed twice when the process exits, producing the double free.
 
 **Debugging Steps**:
@@ -173,10 +174,10 @@ If `hwloc` was built against a *different* implementation than the one RCCL uses
 
     ```sh
     # Match RCCL linked against librocm_smi64 (ROCm <= 7.2.4)
-    ./configure --with-rocm=${ROCM_PATH} --disable-rsmi-amd
+    ./configure --prefix="$HWLOC_HOME" --with-rocm="${ROCM_PATH}" --disable-doxygen --disable-cairo --disable-rsmi-amd
 
     # Match RCCL linked against libamd_smi (ROCm >= 7.14)
-    ./configure --with-rocm=${ROCM_PATH} --disable-rsmi-rocm
+    ./configure --prefix="$HWLOC_HOME" --with-rocm="${ROCM_PATH}" --disable-doxygen --disable-cairo --disable-rsmi-rocm
     ```
 
     Confirm the `configure` output reports the expected backend (for example `Using only ROCm SMI for RSMI backend`), then rebuild and reinstall `hwloc` and rebuild the OFI plugin against it.
