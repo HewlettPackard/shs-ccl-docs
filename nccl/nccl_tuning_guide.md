@@ -116,7 +116,7 @@ popd
 
 # Build the OFI Plugin
 echo "==> Building aws-ofi-nccl plugin"
-git clone https://github.com/aws/aws-ofi-nccl.git && git -C aws-ofi-nccl fetch --tags --quiet && git -C aws-ofi-nccl checkout v1.21.1
+git clone https://github.com/aws/aws-ofi-nccl.git && git -C aws-ofi-nccl fetch --tags --quiet && git -C aws-ofi-nccl checkout v1.22.0.
 pushd aws-ofi-nccl
 ./autogen.sh
 CC=cc CXX=CC ./configure \
